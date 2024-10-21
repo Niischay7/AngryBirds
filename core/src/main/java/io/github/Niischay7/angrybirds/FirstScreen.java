@@ -87,7 +87,6 @@ public class FirstScreen implements Screen {
         eggsImage.setPosition((Gdx.graphics.getWidth() - eggsImage.getWidth()) / 2-70,
             (Gdx.graphics.getHeight() - eggsImage.getHeight()) / 2 +30);
 
-//eihgeihg
 //        stage.addActor(angrybirdsImage);
         stage.addActor(playbuttonImage);
         stage.addActor(exitbuttonImage);
