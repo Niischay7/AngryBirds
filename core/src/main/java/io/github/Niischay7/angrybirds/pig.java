@@ -7,6 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import org.w3c.dom.Text;
 
-public class pig {
+public class pig extends Actor {
 
 }

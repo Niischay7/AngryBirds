@@ -39,7 +39,7 @@ public class thirdscreen implements Screen {
             backgroundImage.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             stage.addActor(backgroundImage);
             Texture catapult = new Texture("catapult-removebg-preview.png");
-            catapult cata=new catapult(45.2,67,catapult);
+            catapult cata=new catapult(45.2F,67,catapult);
 
             Image catapultImage = new Image(catapult);
             catapultImage.setSize(100, 100);
