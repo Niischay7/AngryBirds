@@ -8,5 +8,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import org.w3c.dom.Text;
 
 public class pig extends Actor {
-
+    protected String color;
+    protected String type;
+    public float size;
+    public int hp;
+    protected Texture texture;
+    public pig(String color, String type, float size, int hp, Texture texture) {
+        this.color = color;
+        this.type = type;
+        this.size = size;
+        this.hp = hp;
+        this.texture = texture;
+    }
 }

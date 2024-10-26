@@ -2,6 +2,7 @@ package io.github.Niischay7.angrybirds;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -21,6 +22,7 @@ public class FirstScreen implements Screen {
     private final Main game;
     private Texture backgroundTexture;
     private Image background;
+    private Music backgroundMusic;
 
     public FirstScreen(Main game) {
         this.game = game;
@@ -53,7 +55,10 @@ public class FirstScreen implements Screen {
         Texture exitbutton = new Texture(Gdx.files.internal("exitbutton.jpeg"));
         Texture eggs = new Texture(Gdx.files.internal("eggs.jpeg"));
         Texture birdandpigs = new Texture(Gdx.files.internal("birdandpig.jpeg"));
-
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("25. Main Theme.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.5f);
+        backgroundMusic.play();
         Image angrybirdsImage = new Image(angrybirds);
         Image pigsImage = new Image(pigs);
         Image woodImage = new Image(wood);
@@ -142,5 +147,6 @@ public class FirstScreen implements Screen {
 
         stage.dispose();
         backgroundTexture.dispose();
+        backgroundMusic.dispose();
     }
 }

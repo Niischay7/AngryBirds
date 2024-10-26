@@ -17,6 +17,8 @@ public class secondscreen implements Screen {
     private Main game;
     private Texture backgroundTexture;
     private Image background;
+    private Texture backButtonTexture;
+    private Image backButton;
 
     public secondscreen(Main game) {
         this.game = game;
@@ -26,12 +28,7 @@ public class secondscreen implements Screen {
 
     @Override
     public void show() {
-
-
-
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-
         float buttonWidth = 95;
         float buttonHeight = 85;
         float paddingX = 30;
@@ -43,9 +40,7 @@ public class secondscreen implements Screen {
         float startX = 0;
         float startY = Gdx.graphics.getHeight() - 245;
 
-
         for (int i = 1; i <= totalLevels; i++) {
-
             TextButton levelButton = new TextButton("Level " + i, skin);
 
             final int level = i;
@@ -57,7 +52,6 @@ public class secondscreen implements Screen {
                 }
             });
 
-
             float yPos = 0;
             int j = i;
             paddingX += (i % 5) * 1;
@@ -68,11 +62,9 @@ public class secondscreen implements Screen {
                 yPos = startY - (i - 1) / columns * (buttonHeight + paddingY);
             }
 
-
             levelButton.setSize(buttonWidth, buttonHeight);
             levelButton.setPosition(xPos, yPos);
             paddingX -= ((i - 1) % 5) * 1;
-
 
             stage.addActor(levelButton);
         }
@@ -80,11 +72,25 @@ public class secondscreen implements Screen {
         backgroundTexture = new Texture(Gdx.files.internal("levels.jpg"));
         background = new Image(backgroundTexture);
         background.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        background.setTouchable(Touchable.disabled); // Prevent the background from consuming input events
-
-
+        background.setTouchable(Touchable.disabled);
         stage.addActor(background);
 
+
+        backButtonTexture = new Texture(Gdx.files.internal("backbuuton.png"));
+        backButton = new Image(backButtonTexture);
+        backButton.setSize(100, 100);
+        backButton.setPosition(10, Gdx.graphics.getHeight() - 110);
+
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new FirstScreen(game));
+            }
+        });
+        stage.addActor(backButton);
+
+        // Ensure input processor is set
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -96,27 +102,25 @@ public class secondscreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void hide() {
-
     }
 
     @Override
     public void dispose() {
         backgroundTexture.dispose();
+        backButtonTexture.dispose();
         stage.dispose();
     }
 }
