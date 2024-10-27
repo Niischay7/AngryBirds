@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+
 /** First screen of the application. Displayed after the application is created. */
 public class FirstScreen implements Screen {
     private Stage stage;
@@ -126,7 +127,6 @@ public class FirstScreen implements Screen {
     }
     @Override
     public void resize(int width, int height) {
-
         stage.getViewport().update(width, height, true);
     }
     @Override
@@ -150,3 +150,4 @@ public class FirstScreen implements Screen {
         backgroundMusic.dispose();
     }
 }
+//updated
