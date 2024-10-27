@@ -212,7 +212,7 @@ public class thirdscreen implements Screen {
 
     @Override
     public void hide() {
-        // Remove input processor when hidden
+
         Gdx.input.setInputProcessor(null);
     }
 
