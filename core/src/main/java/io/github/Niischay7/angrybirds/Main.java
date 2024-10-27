@@ -14,5 +14,4 @@ public class Main extends Game {
         birds=new ArrayList<>();
         setScreen(new FirstScreen(this));
     }
-
 }
