@@ -5,6 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 public class glassblock extends blocks{
     public glassblock(float size, int hp) {
         super("glass", size, hp);
-        this.texture = new Texture("glassblock-removebg-preview.png");
+        this.texture = new Texture("glassblock-removebg-preview.png");//glass image ust for GUI
     }
 }
