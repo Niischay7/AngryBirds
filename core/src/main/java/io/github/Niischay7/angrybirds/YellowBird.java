@@ -21,7 +21,7 @@ public class YellowBird extends Bird {
 
     public void increase_momentum() {
         float current_velocity = getVelocity();
-        System.out.println("Momentum increased! New velocity: " + (this.velocity + current_velocity/2));
+        System.out.println("Momentum increased! New velocity: " + (this.velocity + current_velocity/2));//flash waali ability
 
     }
 }
