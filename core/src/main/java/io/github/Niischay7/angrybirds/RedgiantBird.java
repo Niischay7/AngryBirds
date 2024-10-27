@@ -17,6 +17,5 @@ public class RedgiantBird extends Bird{
     public int min_damage() {
         return 5;  // change krlenge baadmein
     }
-
-
+    // is bird ka kuchh hota hi nhi ability
 }
