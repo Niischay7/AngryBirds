@@ -15,7 +15,7 @@ public class BlueBird extends Bird {
 
     @Override
     public int min_damage() {
-        return 5;  // change krlenge baadmein
+        return 5;  // change krlenge isko baadmein 
     }
 
     public void split_into_three() {
