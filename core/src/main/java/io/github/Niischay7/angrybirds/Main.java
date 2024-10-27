@@ -15,3 +15,4 @@ public class Main extends Game {
         setScreen(new FirstScreen(this));
     }
 }
+//code khtm.
