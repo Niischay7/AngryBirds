@@ -14,7 +14,7 @@ public  class Bird extends Actor{
     public float size;
     public int hp;
     protected int damage;//yeh shayad add krna padh jaaye reference ke liye likh diya maine
-    protected float velocity;
+    protected float velocity;// 2-dimensional waala dekhlenge baadmein
     protected Texture texture;
 
     public Bird() {
