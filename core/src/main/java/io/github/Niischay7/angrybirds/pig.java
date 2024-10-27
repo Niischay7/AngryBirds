@@ -15,9 +15,11 @@ public class pig extends Actor {
     protected Texture texture;
     public pig(String color, String type, float size, int hp, Texture texture) {
         this.color = color;
-        this.type = type;
+        this.type = type;// type se hum king pig wagera define krlenge
         this.size = size;
         this.hp = hp;
         this.texture = texture;
     }
 }
+
+//updated code !
