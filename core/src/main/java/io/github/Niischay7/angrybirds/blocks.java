@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public abstract class blocks extends Actor {
-    protected String material;
+    protected String material;//wood,stone,glass
     public float size;
     public int hp;
     protected Texture texture;
