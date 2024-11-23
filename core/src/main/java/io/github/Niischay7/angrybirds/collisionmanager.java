@@ -57,7 +57,7 @@ public class collisionmanager {
         // Remove destroyed actors
         removeDestroyedActors();
 
-        // Check game state after processing collisions
+        // Check game state after processing colli
         checkGameState(bird);
     }
     private void processBlockCollision(blocks block, Bird bird, float angle, float speed) {
