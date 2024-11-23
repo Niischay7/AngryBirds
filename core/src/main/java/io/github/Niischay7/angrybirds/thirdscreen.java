@@ -73,7 +73,7 @@ public class thirdscreen implements Screen {
         if (!birdsAdded) {
             addBirds();
             createStructure();
-            collisionManager = new collisionmanager(stage, allBlocks, allPigs);
+            collisionManager = new collisionmanager(stage, allBlocks, allPigs,game,this);
             birdsAdded = true;
         }
     }
@@ -210,6 +210,7 @@ public class thirdscreen implements Screen {
         // Terence bird
         Texture terence1 = new Texture("terence-removebg-preview.png");
         Bird terence = createBird(terence1, "Red", birdX, birdY, 40);
+        terence.getBirdImage().setName("terence");
         birds.add(terence);
         stage.addActor(terence.getBirdImage());
 
@@ -217,6 +218,9 @@ public class thirdscreen implements Screen {
         Texture blueImage1 = new Texture("bluebird-removebg-preview.png");
         Bird blueBird = createBird(blueImage1, "Blue", birdX - 50, birdY, 40);
         birds.add(blueBird);
+
+        blueBird.getBirdImage().setName("bluebird");
+
         stage.addActor(blueBird.getBirdImage());
 
         // Yellow bird
@@ -224,7 +228,7 @@ public class thirdscreen implements Screen {
         Bird yellowBird = createBird(yellowImage1, "Yellow", birdX - 100, birdY, 40);
         birds.add(yellowBird);
         stage.addActor(yellowBird.getBirdImage());
-
+        yellowBird.getBirdImage().setName("yellow");
         // Add listeners to each bird
         for (Bird bird : birds) {
             addBirdListeners(bird);
@@ -284,7 +288,7 @@ public class thirdscreen implements Screen {
                     float deltaX = slingPosition.x - selectedBird.getX();
                     float deltaY = slingPosition.y - selectedBird.getY();
                     Vector2 launchVector = new Vector2(deltaX, deltaY);
-
+                    selectedBird.getBirdImage().setName("launched");
                     float distance = launchVector.len();
                     // Adjusted power calculation for more intense launches
                     float powerRatio = Math.min(distance / MAX_DRAG_DISTANCE, 1.0f);

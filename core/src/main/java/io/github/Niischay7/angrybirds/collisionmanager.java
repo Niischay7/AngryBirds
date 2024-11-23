@@ -14,15 +14,15 @@ public class collisionmanager {
     private Main game;
     private thirdscreen gameScreen;
     private boolean gameStateChecked = false;
+    private static final float GROUND_Y = 68f;
 
-    public collisionmanager(Stage stage, Array<blocks> allBlocks, Array<pig> allPigs) {
+    public collisionmanager(Stage stage, Array<blocks> allBlocks, Array<pig> allPigs, Main game, thirdscreen gameScreen) {
         this.stage = stage;
         this.allBlocks = allBlocks;
         this.allPigs = allPigs;
         this.actorsToRemove = new Array<>();
         this.game = game;
         this.gameScreen = gameScreen;
-
     }
 
     public void collisionmanager(Stage stage, Array<blocks> allBlocks, Array<pig> allPigs) {
@@ -34,6 +34,12 @@ public class collisionmanager {
 
     public void handleCollisions(Bird bird) {
         if (!bird.isLaunched()) return;
+
+        // Check for ground collision first
+        if (bird.getY() <= GROUND_Y) {
+            handleGroundCollision(bird);
+            return;
+        }
 
         Rectangle birdBounds = new Rectangle(bird.getX(), bird.getY(), bird.size, bird.size);
         Vector2 velocity = bird.getVelocity();
@@ -57,7 +63,23 @@ public class collisionmanager {
         // Remove destroyed actors
         removeDestroyedActors();
 
-        // Check game state after processing colli
+        // Check game state after processing collisions
+        checkGameState(bird);
+    }
+    private void handleGroundCollision(Bird bird) {
+        // Find and remove the bird's image from the stage
+        for (Actor actor : stage.getActors()) {
+            if (actor instanceof Image && actor.getX() == bird.getX() && actor.getY() == bird.getY()) {
+                actorsToRemove.add(actor);
+                break;
+            }
+        }
+
+        // Set bird as "destroyed" or inactive
+        bird.setVelocity(new Vector2(0, 0));
+        removeDestroyedActors();
+
+        // Check game state after ground collision
         checkGameState(bird);
     }
     private void processBlockCollision(blocks block, Bird bird, float angle, float speed) {
@@ -101,23 +123,24 @@ public class collisionmanager {
         for (Actor actor : stage.getActors()) {
             if (actor instanceof Image) {
                 Image img = (Image)actor;
-                // Check if it's a bird that hasn't been launched
-                if (!img.getName().equals("launched") && (
-                    img.getName().equals("Red") ||
-                        img.getName().equals("Blue") ||
-                        img.getName().equals("Yellow"))) {
+                String imageName = img.getName();
+                // Check if it's a bird that hasn't been launched yet
+                if (imageName != null && !imageName.equals("launched") &&
+                    (imageName.contains("terence") ||
+                        imageName.contains("bluebird") ||
+                        imageName.contains("yellow"))) {
                     remainingBirds++;
                 }
             }
         }
 
-        // Check if current bird has stopped moving
-        boolean birdStopped = currentBird.getVelocity().len() < 1f;
+        // Check if current bird has stopped moving or hit the ground
+        boolean birdStopped = currentBird.getVelocity().len() < 1f || currentBird.getY() <= GROUND_Y;
 
-        if (allPigsDestroyed) {
+        if (allPigsDestroyed && game != null) {
             gameStateChecked = true;
             game.setScreen(new winscreen(game));
-        } else if (remainingBirds == 0 && birdStopped) {
+        } else if (remainingBirds == 0 && birdStopped && game != null && gameScreen != null) {
             gameStateChecked = true;
             game.setScreen(new losescreen(game, gameScreen));
         }
