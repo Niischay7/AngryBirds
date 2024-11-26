@@ -29,10 +29,8 @@ public class FirstScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-
         backgroundTexture = new Texture(Gdx.files.internal("download.jpeg"));
         background = new Image(backgroundTexture);
-
 
         background.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -69,7 +67,6 @@ public class FirstScreen implements Screen {
         Image eggsImage = new Image(eggs);
         Image birdandpigsImage = new Image(birdandpigs);
 
-
         float logoWidth = Gdx.graphics.getWidth() * 0.7f;
         float logoHeight = angrybirdsImage.getHeight() * (logoWidth / angrybirdsImage.getWidth());
 
@@ -78,8 +75,6 @@ public class FirstScreen implements Screen {
         exitbuttonImage.setSize(logoWidth*((float) 1/5), logoHeight*((float) 2/5));
         pigsImage.setSize(logoWidth*((float) 2/5), logoHeight*((float) 4/5));
         eggsImage.setSize(logoWidth*((float) 2/5), logoHeight*((float) 4/5));
-
-
 
         angrybirdsImage.setPosition((Gdx.graphics.getWidth() - angrybirdsImage.getWidth()) / 2,
             (Gdx.graphics.getHeight() - angrybirdsImage.getHeight()) / 2 + 130);

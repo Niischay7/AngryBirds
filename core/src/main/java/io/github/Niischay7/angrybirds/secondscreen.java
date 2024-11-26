@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class secondscreen implements Screen {
     private Stage stage;
@@ -22,7 +23,7 @@ public class secondscreen implements Screen {
 
     public secondscreen(Main game) {
         this.game = game;
-        stage = new Stage();
+        this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -52,19 +53,11 @@ public class secondscreen implements Screen {
                 }
             });
 
-            float yPos = 0;
-            int j = i;
-            paddingX += (i % 5) * 1;
+            float yPos = startY - ((i - 1) / columns) * (buttonHeight + paddingY);
             float xPos = startX + ((i - 1) % columns) * (buttonWidth + paddingX);
-            if ((i - 1) % 5 == 0 && i != 2) {
-                yPos = startY - ((float) (i - 1) / columns) * (buttonHeight + paddingY);
-            } else {
-                yPos = startY - (i - 1) / columns * (buttonHeight + paddingY);
-            }
 
             levelButton.setSize(buttonWidth, buttonHeight);
             levelButton.setPosition(xPos, yPos);
-            paddingX -= ((i - 1) % 5) * 1;
 
             stage.addActor(levelButton);
         }
@@ -74,7 +67,6 @@ public class secondscreen implements Screen {
         background.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         background.setTouchable(Touchable.disabled);
         stage.addActor(background);
-
 
         backButtonTexture = new Texture(Gdx.files.internal("backbuuton.png"));
         backButton = new Image(backButtonTexture);
@@ -102,6 +94,7 @@ public class secondscreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -115,6 +108,7 @@ public class secondscreen implements Screen {
 
     @Override
     public void hide() {
+        Gdx.input.setInputProcessor(null);
     }
 
     @Override

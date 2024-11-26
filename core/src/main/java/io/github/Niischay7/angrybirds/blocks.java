@@ -1,11 +1,12 @@
 package io.github.Niischay7.angrybirds;
 
+import java.io.Serializable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
-public abstract class blocks extends Actor {
+public abstract class blocks extends Actor implements Serializable {
     protected String material;
     public float size;
     public int hp;
@@ -54,6 +55,7 @@ public abstract class blocks extends Actor {
             triggerChainReaction();
         }
     }
+
     public void takeDamage(Bird bird, float impactAngle, float impactSpeed) {
         if (bird != null) {
             takeDamage(bird.damage, impactAngle, impactSpeed);
@@ -95,21 +97,26 @@ public abstract class blocks extends Actor {
             pig.takeDamage(1, 90, 0); // Collapse damage to pigs
         }
     }
-    private void triggerChainReaction() {
+
+    public void triggerChainReaction() {
         if (isDestroyed) {
+            // Existing code for block chain reactions
             for (blocks blockAbove : blocksAbove) {
                 if (!blockAbove.isDestroyed) {
                     blockAbove.takeDamage(10, 90, 400); // Base damage for chain reactions
                 }
             }
 
+            // Fall damage to pigs on this block
             for (pig pigAbove : pigsAbove) {
                 if (!pigAbove.isDestroyed()) {
-                    pigAbove.takeDamage(10, 90, 400); // Base damage for chain reactions
+                    // Ensure pigs fall by "destroying" them
+                    pigAbove.takeDamage(100, 90, 400); // High damage to ensure destruction
                 }
             }
         }
     }
+
     public Rectangle getBounds() {
         // Update bounds position to match current actor position
         bounds.setPosition(getX(), getY());

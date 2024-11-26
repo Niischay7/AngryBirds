@@ -1,15 +1,16 @@
 package io.github.Niischay7.angrybirds;
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class Bird extends Actor {
+public class Bird extends Actor implements Serializable {
     protected String color;
     protected String ability;
     public float size;
@@ -18,8 +19,8 @@ public class Bird extends Actor {
     protected Texture texture;
     private Vector2 velocity;
     private boolean isLaunched = false;
-    private ShapeRenderer trajectoryRenderer;
-    private Image birdImage;
+    private transient ShapeRenderer trajectoryRenderer;
+    private transient Image birdImage;
     private Vector2 initialPosition;
     private static final float GRAVITY = -600f;
     private static final float DRAG = 0.99f;
@@ -60,8 +61,34 @@ public class Bird extends Actor {
         if (!isLaunched) {
             isLaunched = true;
             initialPosition = new Vector2(getX(), getY());
-            System.out.println("Bird launched: " + this);
+            System.out.println("Bird Launched!");
+            System.out.println("Initial Position: " + initialPosition);
+            System.out.println("Current Velocity: " + velocity);
         }
+    }
+
+    public Vector2[] calculateTrajectory(Vector2 initialVelocity, float maxTime) {
+        Vector2[] trajectory = new Vector2[10]; // Reduced number of points
+        Vector2 currentPos = new Vector2(getX(), getY());
+        Vector2 currentVel = new Vector2(initialVelocity);
+        float timeStep = maxTime / trajectory.length;
+
+        for (int i = 0; i < trajectory.length; i++) {
+            trajectory[i] = new Vector2(currentPos);
+
+            // Update velocity with gravity
+            currentVel.y += GRAVITY * timeStep;
+
+            // Update position
+            currentPos.x += currentVel.x * timeStep;
+            currentPos.y += currentVel.y * timeStep;
+
+            // Optional: Limit trajectory to screen bounds
+            currentPos.x = Math.min(Math.max(currentPos.x, 0), Gdx.graphics.getWidth());
+            currentPos.y = Math.min(Math.max(currentPos.y, 0), Gdx.graphics.getHeight());
+        }
+
+        return trajectory;
     }
 
     public int minDamage() {
@@ -140,5 +167,12 @@ public class Bird extends Actor {
     @Override
     public float getY() {
         return birdImage != null ? birdImage.getY() : super.getY();
+    }
+
+    public void reinitializeTransientFields() {
+        this.birdImage = new Image(texture);
+        this.birdImage.setSize(size, size);
+        this.birdImage.setPosition(getX(), getY());
+        this.trajectoryRenderer = new ShapeRenderer();
     }
 }
