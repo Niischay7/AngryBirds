@@ -11,17 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Bird extends Actor implements Serializable {
+    private static final long serialVersionUID = 1L;
     protected String color;
     protected String ability;
     public float size;
     public int hp;
     protected int damage;
-    protected Texture texture;
-    private Vector2 velocity;
+    protected transient Texture texture;
+    private transient Vector2 velocity;
     private boolean isLaunched = false;
     private transient ShapeRenderer trajectoryRenderer;
     private transient Image birdImage;
-    private Vector2 initialPosition;
+    private transient Vector2 initialPosition;
     private static final float GRAVITY = -600f;
     private static final float DRAG = 0.99f;
 
@@ -90,7 +91,9 @@ public class Bird extends Actor implements Serializable {
 
         return trajectory;
     }
-
+    public void setLaunched(boolean launched) {
+        isLaunched = launched;
+    }
     public int minDamage() {
         return 1;
     }
@@ -169,7 +172,7 @@ public class Bird extends Actor implements Serializable {
         return birdImage != null ? birdImage.getY() : super.getY();
     }
 
-    public void reinitializeTransientFields() {
+    public void reinitializeTransientFields(Texture texture) {
         this.birdImage = new Image(texture);
         this.birdImage.setSize(size, size);
         this.birdImage.setPosition(getX(), getY());

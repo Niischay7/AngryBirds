@@ -15,10 +15,12 @@ public class PauseScreen implements Screen {
     private Stage stage;
     private Skin skin;
     private Screen previousScreen;
+    private int levelNumber;
 
-    public PauseScreen(Main game, Screen previousScreen) {
+    public PauseScreen(Main game, Screen previousScreen, int levelNumber) {
         this.game = game;
         this.previousScreen = previousScreen;
+        this.levelNumber = levelNumber;
         this.stage = new Stage(new ScreenViewport());
 
         Gdx.input.setInputProcessor(stage);
@@ -30,14 +32,13 @@ public class PauseScreen implements Screen {
             return;
         }
 
-
         TextButton resume_game = new TextButton("Resume", skin);
         resume_game.setSize(200, 60);
         resume_game.setPosition(Gdx.graphics.getWidth() / 2f - 100, Gdx.graphics.getHeight() / 2f + 120);
 
         TextButton exit_game = new TextButton("Exit", skin);
         exit_game.setSize(200, 60);
-        exit_game.setPosition(Gdx.graphics.getWidth() / 2f - 100, Gdx.graphics.getHeight() / 2f -120);
+        exit_game.setPosition(Gdx.graphics.getWidth() / 2f - 100, Gdx.graphics.getHeight() / 2f - 120);
 
         TextButton load_level = new TextButton("Load Level", skin);
         load_level.setSize(200, 60);
@@ -61,7 +62,6 @@ public class PauseScreen implements Screen {
         exit_game.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
                 dispose();
                 Screen newScreen = new secondscreen(game);
                 // Set screen first
@@ -70,6 +70,30 @@ public class PauseScreen implements Screen {
                 Gdx.app.postRunnable(() -> {
                     newScreen.show();
                 });
+            }
+        });
+
+        load_level.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("PauseScreen", "Load Level clicked");
+                if (previousScreen instanceof thirdscreen) {
+                    thirdscreen gameScreen = (thirdscreen) previousScreen;
+                    GameDataManager.loadGameData(gameScreen, levelNumber);
+                    dispose();
+                    game.setScreen(gameScreen);
+                }
+            }
+        });
+
+        save_level.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("PauseScreen", "Save Level clicked");
+                if (previousScreen instanceof thirdscreen) {
+                    thirdscreen gameScreen = (thirdscreen) previousScreen;
+                    GameDataManager.saveGameData(gameScreen, levelNumber);
+                }
             }
         });
 

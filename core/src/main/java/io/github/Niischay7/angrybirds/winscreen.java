@@ -50,11 +50,11 @@ public class winscreen implements Screen {
             }
         });
 
-        // Create and add the score label with increased font size and contrasting color
+
         Label.LabelStyle labelStyle = new Label.LabelStyle(skin.getFont("default-font"), Color.WHITE);
         scoreLabel = new Label("Score: " + score, labelStyle);
         scoreLabel.setFontScale(2.5f); // Increase font size
-        scoreLabel.setPosition(Gdx.graphics.getWidth() / 2f - 100, Gdx.graphics.getHeight() / 2f + 50); // Adjust position
+        scoreLabel.setPosition(Gdx.graphics.getWidth() / 2f - 100, Gdx.graphics.getHeight() / 2f + 50);
 
         stage.addActor(backButton);
         stage.addActor(winImage);

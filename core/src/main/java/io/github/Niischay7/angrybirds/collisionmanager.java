@@ -121,15 +121,16 @@ public class collisionmanager {
                 if (imageName != null && !imageName.equals("launched") &&
                     (imageName.contains("terence") ||
                         imageName.contains("bluebird") ||
-                        imageName.contains("yellow"))) {
+                        imageName.contains("yellow")) ) {
                     remainingBirds++;
                 }
             }
         }
 
         boolean birdStopped = currentBird.getVelocity().len() < 1f || currentBird.getY() <= GROUND_Y;
+//
 
-        if (remainingBirds == 0 && birdStopped && game != null && gameScreen != null) {
+        if (remainingBirds == 0 && birdStopped && game != null && gameScreen != null ) {
             System.out.println("Triggering Lose Screen");
             gameStateChecked = true;
             game.setScreen(new losescreen(game, gameScreen));

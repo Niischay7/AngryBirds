@@ -1,36 +1,39 @@
 package io.github.Niischay7.angrybirds;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-public abstract class blocks extends Actor implements Serializable {
+public abstract class blocks extends Actor implements Serializable{
+    private static final long serialVersionUID = 1L;
     protected String material;
     public float size;
     public int hp;
-    protected Texture texture;
-    protected Rectangle bounds;
-    protected Array<blocks> blocksAbove;
-    protected Array<pig> pigsAbove;
+    protected transient Texture texture;
+    protected transient Rectangle bounds;
+    protected List<blocks> blocksAbove = new ArrayList<>();
+    protected List<pig> pigsAbove = new ArrayList<>();
     protected boolean isDestroyed;
+    private float x;
+    private float y;
 
     public blocks(String material, float size, int hp) {
         this.material = material;
         this.size = size;
         this.hp = hp;
         this.bounds = new Rectangle();
-        this.blocksAbove = new Array<>();
-        this.pigsAbove = new Array<>();
+        this.blocksAbove = new ArrayList<>();
+        this.pigsAbove = new ArrayList<>();
         this.isDestroyed = false;
     }
-
-    @Override
-    public void setPosition(float x, float y) {
-        super.setPosition(x, y);
-        bounds.set(x, y, size, size);
+    public blocks() {
     }
+
 
     public void addBlockAbove(blocks block) {
         blocksAbove.add(block);
@@ -63,13 +66,12 @@ public abstract class blocks extends Actor implements Serializable {
     }
 
     private float calculateDamageMultiplier(float impactAngle, float impactSpeed) {
-        // Normalize speed (assuming max speed is 1200f)
+
         float normalizedSpeed = Math.min(impactSpeed / 1200f, 1.0f);
 
-        // Calculate angle multiplier (perpendicular hits deal more damage)
         float angleMultiplier = Math.abs((float)Math.sin(Math.toRadians(impactAngle)));
 
-        // Material-specific multipliers
+
         float materialMultiplier;
         switch(material.toLowerCase()) {
             case "stone":
@@ -89,7 +91,7 @@ public abstract class blocks extends Actor implements Serializable {
     }
 
     protected void onDestroy() {
-        // Damage objects above when destroyed
+
         for (blocks block : blocksAbove) {
             block.takeDamage(new Bird(null, "", "", size, 1, 1, null), 90, 0); // Collapse damage
         }
@@ -97,28 +99,49 @@ public abstract class blocks extends Actor implements Serializable {
             pig.takeDamage(1, 90, 0); // Collapse damage to pigs
         }
     }
+    @Override
+    public void setPosition(float x, float y) {
+        super.setPosition(x, y);
+        this.x = x;
+        this.y = y;
+        bounds.set(x, y, size, size);
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void reinitializeTransientFields(Texture texture) {
+        this.bounds = new Rectangle();
+        this.bounds.setPosition(getX(), getY());
+        this.bounds.setSize(size, size);
+    }
 
     public void triggerChainReaction() {
         if (isDestroyed) {
-            // Existing code for block chain reactions
+
             for (blocks blockAbove : blocksAbove) {
                 if (!blockAbove.isDestroyed) {
-                    blockAbove.takeDamage(10, 90, 400); // Base damage for chain reactions
+                    blockAbove.takeDamage(10, 90, 400);
                 }
             }
 
-            // Fall damage to pigs on this block
+
             for (pig pigAbove : pigsAbove) {
                 if (!pigAbove.isDestroyed()) {
-                    // Ensure pigs fall by "destroying" them
-                    pigAbove.takeDamage(100, 90, 400); // High damage to ensure destruction
+
+                    pigAbove.takeDamage(100, 90, 400);
                 }
             }
         }
     }
 
     public Rectangle getBounds() {
-        // Update bounds position to match current actor position
+
         bounds.setPosition(getX(), getY());
         return bounds;
     }

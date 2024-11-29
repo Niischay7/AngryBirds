@@ -75,16 +75,16 @@ public class losescreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // Clear the screen
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        // Update and draw the stage
+
         stage.act(delta);
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-        // Update viewport when screen is resized
+
         stage.getViewport().update(width, height, true);
     }
 

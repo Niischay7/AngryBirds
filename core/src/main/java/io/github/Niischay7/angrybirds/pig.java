@@ -5,17 +5,22 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class pig extends Actor {
+import java.io.Serializable;
+
+public class pig extends Actor implements Serializable {
+    private static final long serialVersionUID = 1L;
     protected String color;
     protected String type;
     public float size;
     public int hp;
-    protected Texture texture;
+    protected transient Texture texture;
     protected Rectangle bounds;
     protected boolean isDestroyed;
     protected boolean isFalling;
-    private static final float GRAVITY = -600f; // Gravity constant
-    private static final float DRAG = 0.99f; // Air resistance
+    private static final float GRAVITY = -600f;
+    private static final float DRAG = 0.99f;
+    private float x;
+    private float y;
 
     public pig(String color, String type, float size, int hp, Texture texture) {
         this.color = color;
@@ -28,11 +33,7 @@ public class pig extends Actor {
         this.isFalling = false;
     }
 
-    @Override
-    public void setPosition(float x, float y) {
-        super.setPosition(x, y);
-        bounds.set(x, y, size, size);
-    }
+
 
     public void takeDamage(int damage, float impactAngle, float impactSpeed) {
         hp -= damage;
@@ -43,11 +44,31 @@ public class pig extends Actor {
     }
 
     public Rectangle getBounds() {
-        // Update bounds position to match current actor position
+
         bounds.setPosition(getX(), getY());
         return bounds;
     }
+    @Override
+    public void setPosition(float x, float y) {
+        super.setPosition(x, y);
+        this.x = x;
+        this.y = y;
+        bounds.set(x, y, size, size);
+    }
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void reinitializeTransientFields(Texture pigTexture) {
+        this.bounds = new Rectangle();
+        this.bounds.setPosition(getX(), getY());
+        this.bounds.setSize(size, size);
+    }
     public boolean isDestroyed() {
         return isDestroyed;
     }
@@ -58,20 +79,20 @@ public class pig extends Actor {
 
     public void updateFalling(float delta) {
         if (isFalling) {
-            // Update velocity with gravity
+
             float velocityY = getVelocity().y + GRAVITY * delta;
             float velocityX = getVelocity().x * DRAG;
 
-            // Update position based on velocity
+
             float newY = getY() + velocityY * delta;
             float newX = getX() + velocityX * delta;
 
             setPosition(newX, newY);
 
-            // Apply drag (air resistance)
+
             setVelocity(new Vector2(velocityX, velocityY));
 
-            // Check for ground collision
+
             if (getY() <= 0) {
                 setY(0);
                 setVelocity(new Vector2(0, 0));
@@ -81,13 +102,11 @@ public class pig extends Actor {
     }
 
     private Vector2 getVelocity() {
-        // Assuming you have a velocity vector in your pig class
-        // Return the current velocity vector
+
         return new Vector2(0, 0); // Placeholder, replace with actual velocity
     }
 
     private void setVelocity(Vector2 velocity) {
-        // Assuming you have a velocity vector in your pig class
-        // Set the current velocity vector
+
     }
 }

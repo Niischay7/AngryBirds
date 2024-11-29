@@ -3,7 +3,10 @@ package io.github.Niischay7.angrybirds;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
-public class BlueBird extends Bird {
+import java.io.Serializable;
+
+public class BlueBird extends Bird implements Serializable {
+    private static final long serialVersionUID = 1L;
     public BlueBird(Texture texture, String color, String ability, float size, int hp,int damage ,Vector2 velocity) {
         super(texture, "Blue", "split into three", size, hp,damage, velocity);
 

@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.math.Vector2;
 
 public class thirdscreen implements Screen {
     private Main game;
@@ -33,8 +32,8 @@ public class thirdscreen implements Screen {
     private Vector2 dragStart;
     Array<blocks> allBlocks;
     Array<pig> allPigs;
-    private static final float MAX_DRAG_DISTANCE = 150f; // Adjust this value as needed
-    private static final float MIN_LAUNCH_POWER = 200f; // Minimum launch power
+    private static final float MAX_DRAG_DISTANCE = 150f;
+    private static final float MIN_LAUNCH_POWER = 200f;
     private static final float MAX_LAUNCH_POWER = 800f;
     private collisionmanager collisionManager;
     private int score = 0;
@@ -45,20 +44,20 @@ public class thirdscreen implements Screen {
     private static final float TIME_STEP = 1 / 60f;
     private static final int VELOCITY_ITERATIONS = 6;
     private static final int POSITION_ITERATIONS = 2;
+    boolean levelCompleted = false;
 
     public thirdscreen(Main game, int levelNumber) {
         this.game = game;
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         this.birds = new Array<>();
-        this.slingPosition = new Vector2(70, 137); // Positioned near catapult
+        this.slingPosition = new Vector2(70, 137);
         this.dragStart = new Vector2();
         this.allBlocks = new Array<>();
         this.allPigs = new Array<>();
         this.levelNumber = levelNumber;
         world = new World(new Vector2(0, -10), true);
         debugRenderer = new Box2DDebugRenderer();
-
     }
 
     private void createLevelStructure() {
@@ -83,13 +82,11 @@ public class thirdscreen implements Screen {
         trajectoryActor = new TrajectoryActor();
         stage.addActor(trajectoryActor);
         if (background == null) {
-            // Set up background
             background = new Texture("thirdscreenbg.jpg");
             backgroundImage = new Image(background);
             backgroundImage.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             stage.addActor(backgroundImage);
 
-            // Set up catapult
             Texture catapult = new Texture("catapult-removebg-preview.png");
             catapult cata = new catapult(45.2F, 500, catapult);
             Image catapultImage = new Image(catapult);
@@ -97,11 +94,10 @@ public class thirdscreen implements Screen {
             catapultImage.setPosition(40, 68);
             stage.addActor(catapultImage);
 
-            // Set up buttons
             setupButtons();
         }
         setupScoreboard();
-        // Add birds and structure if not already added
+
         if (!birdsAdded) {
             addBirds();
             createLevelStructure();
@@ -111,12 +107,11 @@ public class thirdscreen implements Screen {
     }
 
     private void setupScoreboard() {
-        // Use LibGDX skin for the label
+
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        // Create score label
         scoreLabel = new Label("Score: 0", skin);
-        scoreLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 50); // Top-right corner
+        scoreLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 50);
         scoreLabel.setColor(Color.WHITE);
 
         stage.addActor(scoreLabel);
@@ -135,20 +130,19 @@ public class thirdscreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // Clear the screen
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Create ShapeRenderer outside of the try-catch block
         ShapeRenderer trajectoryRenderer = new ShapeRenderer();
 
-        // Update stage
         stage.act(delta);
 
-        // Set up trajectory rendering
+        world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+
         if (selectedBird != null && !selectedBird.isLaunched()) {
             try {
-                // Calculate launch vector based on current bird position and sling position
+
                 float deltaX = slingPosition.x - selectedBird.getX();
                 float deltaY = slingPosition.y - selectedBird.getY();
                 Vector2 launchVector = new Vector2(deltaX, deltaY);
@@ -159,50 +153,44 @@ public class thirdscreen implements Screen {
 
                 launchVector.nor().scl(power);
 
-                // Calculate trajectory points
                 Vector2[] trajectoryPoints = selectedBird.calculateTrajectory(launchVector, 3f);
 
-                // Update trajectory actor
                 trajectoryActor.setTrajectoryPoints(trajectoryPoints);
             } catch (Exception e) {
                 System.err.println("Error drawing trajectory: " + e.getMessage());
             }
         } else {
-            // Clear trajectory when no bird is selected or launched
             trajectoryActor.setTrajectoryPoints(null);
         }
 
-        // Update birds physics and check collisions
         for (Bird bird : birds) {
             if (bird.isLaunched()) {
                 bird.act(delta);
                 handleCollisions(bird);
 
-                // Optional: Remove destroyed blocks/pigs from stage
                 for (blocks block : allBlocks) {
                     if (block.isDestroyed()) {
-                        block.remove(); // Remove from stage if actor exists
+                        block.remove();
                     }
                 }
 
                 for (pig pig : allPigs) {
                     if (pig.isFalling()) {
-                        pig.updateFalling(delta); // Remove from stage if actor exists
+                        pig.updateFalling(delta);
                     }
                 }
             }
         }
 
-        // Draw stage
         stage.draw();
+
+        debugRenderer.render(world, stage.getCamera().combined);
     }
 
     @Override
     public void resize(int width, int height) {
-        // Update viewport when screen is resized
         stage.getViewport().update(width, height, true);
 
-        // Resize background if it exists
         if (backgroundImage != null) {
             backgroundImage.setSize(width, height);
         }
@@ -210,23 +198,19 @@ public class thirdscreen implements Screen {
 
     @Override
     public void pause() {
-        // Implement pause logic if needed
     }
 
     @Override
     public void resume() {
-        // Implement resume logic if needed
     }
 
     @Override
     public void hide() {
-        // Called when this screen is no longer the current screen
         Gdx.input.setInputProcessor(null);
     }
 
     @Override
     public void dispose() {
-        // Dispose of all resources
         stage.dispose();
         if (background != null) {
             background.dispose();
@@ -237,16 +221,16 @@ public class thirdscreen implements Screen {
         if (trajectoryActor != null) {
             trajectoryActor.dispose();
         }
-        // Dispose of bird textures
         for (Bird bird : birds) {
             if (bird.texture != null) {
                 bird.texture.dispose();
             }
         }
+        world.dispose();
+        debugRenderer.dispose();
     }
 
     private void setupButtons() {
-        // Pause button
         buttonUpTexture = new Texture(Gdx.files.internal("bottom.png"));
         ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
         buttonStyle.up = new TextureRegionDrawable(buttonUpTexture);
@@ -256,11 +240,10 @@ public class thirdscreen implements Screen {
         imageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new PauseScreen(game, thirdscreen.this));
+                game.setScreen(new PauseScreen(game, thirdscreen.this, levelNumber));
             }
         });
 
-        // Win/Lose buttons
         TextButton lose_game = new TextButton("Lose Game", new Skin(Gdx.files.internal("uiskin.json")));
         lose_game.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 60);
         lose_game.setSize(100, 60);
@@ -271,7 +254,7 @@ public class thirdscreen implements Screen {
             }
         });
 
-        TextButton win_game = new TextButton("Win game", new Skin(Gdx.files.internal("uiskin.json")));
+        TextButton win_game = new TextButton("", new Skin(Gdx.files.internal("uiskin.json")));
         win_game.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 150);
         win_game.setSize(100, 60);
         win_game.addListener(new ClickListener() {
@@ -279,6 +262,17 @@ public class thirdscreen implements Screen {
                 game.setScreen(new winscreen(game, score));
             }
         });
+        TextButton nextLevelButton = new TextButton("Win game", new Skin(Gdx.files.internal("uiskin.json")));
+        nextLevelButton.setPosition(Gdx.graphics.getWidth() - 120, 20);
+        nextLevelButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (levelCompleted) {
+                    game.setScreen(new thirdscreen(game, levelNumber + 1));
+                }
+            }
+        });
+      //  stage.addActor(nextLevelButton);
 
         stage.addActor(imageButton);
     }
@@ -292,37 +286,32 @@ public class thirdscreen implements Screen {
     }
 
     private void addBirds() {
-        float birdX = 10; // Initial x-position behind catapult
-        float birdY = 68; // Baseline y-position
-        float spacing = 50; // Space between birds
+        float birdX = 10;
+        float birdY = 68;
+        float spacing = 50;
 
-        // Terence bird (first bird)
         Texture terence1 = new Texture("terence-removebg-preview.png");
         Bird terence = createBird(terence1, "Red", birdX, birdY, 40);
         terence.getBirdImage().setName("terence");
         birds.add(terence);
         stage.addActor(terence.getBirdImage());
 
-        // Blue bird
         Texture blueImage1 = new Texture("bluebird-removebg-preview.png");
         Bird blueBird = createBird(blueImage1, "Blue", birdX - spacing, birdY, 40);
         blueBird.getBirdImage().setName("bluebird");
         birds.add(blueBird);
         stage.addActor(blueBird.getBirdImage());
 
-        // Yellow bird
         Texture yellowImage1 = new Texture("yellow-removebg-preview.png");
         Bird yellowBird = createBird(yellowImage1, "Yellow", birdX - (2 * spacing), birdY, 40);
         yellowBird.getBirdImage().setName("yellow");
         birds.add(yellowBird);
         stage.addActor(yellowBird.getBirdImage());
 
-        // Initially position the first bird at the sling
         if (!birds.isEmpty()) {
             birds.get(0).setPosition(slingPosition.x, slingPosition.y);
         }
 
-        // Add listeners to each bird
         for (Bird bird : birds) {
             addBirdListeners(bird);
         }
@@ -347,7 +336,7 @@ public class thirdscreen implements Screen {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (!bird.isLaunched()) {
                     isDragging = true;
-                    selectedBird = bird; // Explicitly set the selected bird
+                    selectedBird = bird;
                     dragOffset.set(x, y);
                     return true;
                 }
@@ -394,7 +383,6 @@ public class thirdscreen implements Screen {
                     selectedBird.setVelocity(launchVector);
                     selectedBird.launch();
 
-                    // Move next bird into position
                     moveNextBirdToSling();
 
                     isDragging = false;
@@ -405,10 +393,8 @@ public class thirdscreen implements Screen {
     }
 
     private void moveNextBirdToSling() {
-        // Find the first non-launched bird
         for (Bird nextBird : birds) {
             if (!nextBird.isLaunched()) {
-                // Move this bird to the sling position
                 nextBird.setPosition(slingPosition.x, slingPosition.y);
                 return;
             }
@@ -431,32 +417,26 @@ public class thirdscreen implements Screen {
 
     private void handleCollisions(Bird bird) {
         collisionManager.handleCollisions(bird);
-        // checkGameState(); // Check if game is won/lost after collisions
     }
 
     private void processChainReaction(blocks startBlock, Array<blocks> processedBlocks,
                                       Array<pig> processedPigs, float angle, float speed, Bird originalBird) {
         if (processedBlocks.contains(startBlock, true)) return;
 
-        // Process current block
         processedBlocks.add(startBlock);
 
-        // Calculate chain reaction damage
-        float chainReactionMultiplier = 0.7f; // Reduce damage for chain reactions
+        float chainReactionMultiplier = 0.7f;
         int chainDamage = Math.round(originalBird.damage * chainReactionMultiplier);
 
-        // Apply damage to the block using the original bird's properties
         startBlock.takeDamage(originalBird, angle, speed);
 
         if (startBlock.isDestroyed()) {
-            // Process blocks above with diminishing damage
             for (blocks blockAbove : startBlock.blocksAbove) {
                 if (!processedBlocks.contains(blockAbove, true)) {
                     processChainReaction(blockAbove, processedBlocks, processedPigs, 90, speed * 0.8f, originalBird);
                 }
             }
 
-            // Process pigs above with diminishing damage
             for (pig pigAbove : startBlock.pigsAbove) {
                 if (!processedPigs.contains(pigAbove, true)) {
                     pigAbove.takeDamage(chainDamage, 90, speed * 0.8f);
@@ -464,7 +444,6 @@ public class thirdscreen implements Screen {
                 }
             }
 
-            // Check nearby blocks for additional collapses
             checkNearbyBlocks(startBlock, processedBlocks, processedPigs, angle, speed, originalBird);
         }
     }
@@ -472,7 +451,7 @@ public class thirdscreen implements Screen {
     private void checkNearbyBlocks(blocks destroyedBlock, Array<blocks> processedBlocks,
                                    Array<pig> processedPigs, float angle, float speed, Bird originalBird) {
         float collapseRadius = destroyedBlock.size * 1.5f;
-        float proximityDamageMultiplier = 0.5f; // Reduce damage for proximity effects
+        float proximityDamageMultiplier = 0.5f;
 
         for (blocks block : getAllBlocks()) {
             if (!processedBlocks.contains(block, true) && !block.isDestroyed()) {
@@ -481,7 +460,6 @@ public class thirdscreen implements Screen {
                 float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
                 if (distance <= collapseRadius) {
-                    // Calculate diminished damage based on distance
                     float distanceRatio = 1 - (distance / collapseRadius);
                     float adjustedSpeed = speed * distanceRatio * proximityDamageMultiplier;
 
@@ -491,8 +469,7 @@ public class thirdscreen implements Screen {
         }
     }
 
-    private void checkGameState() {
-        // Check if all pigs are destroyed
+    void checkGameState() {
         boolean allPigsDestroyed = true;
         for (pig pig : getAllPigs()) {
             if (!pig.isDestroyed()) {
@@ -506,7 +483,6 @@ public class thirdscreen implements Screen {
             return;
         }
 
-        // Check if all birds are used
         boolean birdsRemaining = false;
         for (Bird bird : birds) {
             if (!bird.isLaunched()) {
@@ -520,26 +496,21 @@ public class thirdscreen implements Screen {
         }
     }
 
-    // Add these methods to your thirdscreen class to set up block relationships
     private void setupBlockRelationships() {
         Array<blocks> allBlocks = getAllBlocks();
         Array<pig> allPigs = getAllPigs();
 
-        // For each base block
         int size = allBlocks.size;
         for (int i = 0; i < size; i++) {
             blocks block = allBlocks.get(i);
 
-            // Check all other blocks to find ones above it
             for (int j = 0; j < size; j++) {
                 blocks other = allBlocks.get(j);
-                // Skip checking against itself
                 if (i != j && isDirectlyAbove(block, other)) {
                     block.addBlockAbove(other);
                 }
             }
 
-            // Check all pigs to find ones above this block
             for (int k = 0; k < allPigs.size; k++) {
                 pig currentPig = allPigs.get(k);
                 if (isDirectlyAbove(block, currentPig)) {
@@ -550,7 +521,7 @@ public class thirdscreen implements Screen {
     }
 
     private boolean isDirectlyAbove(blocks base, blocks above) {
-        float tolerance = 5f; // Adjust this value based on your needs
+        float tolerance = 5f;
         return above.getY() > base.getY() &&
             Math.abs((base.getX() + base.size / 2) - (above.getX() + above.size / 2)) < tolerance;
     }
@@ -562,23 +533,18 @@ public class thirdscreen implements Screen {
     }
 
     private void createFirstLevelStructure() {
-        // Clear existing arrays
         allBlocks.clear();
         allPigs.clear();
 
-        // Create base layer - Stone blocks
         stoneblock stoneBase1 = new stoneblock(60, 100);
         stoneblock stoneBase2 = new stoneblock(60, 100);
         stoneblock stoneBase3 = new stoneblock(60, 100);
 
-        // Middle layer - Wood blocks
         woodblock woodMiddle1 = new woodblock(60, 80);
         woodblock woodMiddle2 = new woodblock(60, 80);
 
-        // Top layer - Glass block
         glassblock glassTop = new glassblock(60, 50);
 
-        // Add all blocks to tracking array
         allBlocks.add(stoneBase1);
         allBlocks.add(stoneBase2);
         allBlocks.add(stoneBase3);
@@ -589,16 +555,14 @@ public class thirdscreen implements Screen {
         Texture pigTexture = new Texture("pigs-removebg-preview.png");
         pig smallPig = new pig("green", "basic", 40, 50, pigTexture);
         pig bigPig = new pig("green", "big", 50, 75, pigTexture);
+        pig kingpig=new pig("green","king",75,100,pigTexture);
 
-        // Add pigs to tracking array
         allPigs.add(smallPig);
         allPigs.add(bigPig);
 
-        // Position and add blocks to stage
         float baseX = 300;
         float baseY = 68;
 
-        // Position blocks
         stoneBase1.setPosition(baseX, baseY);
         stoneBase2.setPosition(baseX + 65, baseY);
         stoneBase3.setPosition(baseX + 130, baseY);
@@ -606,11 +570,9 @@ public class thirdscreen implements Screen {
         woodMiddle2.setPosition(baseX + 106f, baseY + 58);
         glassTop.setPosition(baseX + 61, baseY + 120);
 
-        // Position pigs
         smallPig.setPosition(baseX + 75, baseY + 60);
         bigPig.setPosition(baseX + 65, baseY + 130);
 
-        // Add blocks to stage
         addBlockToStage(stoneBase1, stoneBase1.getX(), stoneBase1.getY());
         addBlockToStage(stoneBase2, stoneBase2.getX(), stoneBase2.getY());
         addBlockToStage(stoneBase3, stoneBase3.getX(), stoneBase3.getY());
@@ -618,33 +580,26 @@ public class thirdscreen implements Screen {
         addBlockToStage(woodMiddle2, woodMiddle2.getX(), woodMiddle2.getY());
         addBlockToStage(glassTop, glassTop.getX(), glassTop.getY());
 
-        // Add pigs to stage
         addPigToStage(smallPig, smallPig.getX(), smallPig.getY());
         addPigToStage(bigPig, bigPig.getX(), bigPig.getY());
 
-        // Setup relationships between blocks and objects above them
         setupBlockRelationships();
     }
 
     private void createSecondLevelStructure() {
-        // Clear existing arrays
         allBlocks.clear();
         allPigs.clear();
 
-        // Create base layer - Stone blocks
         stoneblock stoneBase1 = new stoneblock(60, 100);
         stoneblock stoneBase2 = new stoneblock(60, 100);
         stoneblock stoneBase3 = new stoneblock(60, 100);
 
-        // Middle layer - Mix of wood and stone blocks
         woodblock woodMiddle1 = new woodblock(60, 80);
         stoneblock stoneMiddle = new stoneblock(60, 80);
 
-        // Top layer - Glass and wood blocks
         glassblock glassTop1 = new glassblock(60, 50);
         woodblock woodTop = new woodblock(60, 50);
 
-        // Add all blocks to tracking array
         allBlocks.add(stoneBase1);
         allBlocks.add(stoneBase2);
         allBlocks.add(stoneBase3);
@@ -657,15 +612,12 @@ public class thirdscreen implements Screen {
         pig smallPig = new pig("green", "basic", 40, 50, pigTexture);
         pig mediumPig = new pig("green", "medium", 45, 60, pigTexture);
 
-        // Add pigs to tracking array
         allPigs.add(smallPig);
         allPigs.add(mediumPig);
 
-        // Position and add blocks to stage
         float baseX = 300;
         float baseY = 68;
 
-        // Position blocks in a slightly different configuration
         stoneBase1.setPosition(baseX, baseY);
         stoneBase2.setPosition(baseX + 65, baseY);
         stoneBase3.setPosition(baseX + 130, baseY);
@@ -674,11 +626,9 @@ public class thirdscreen implements Screen {
         glassTop1.setPosition(baseX + 40, baseY + 120);
         woodTop.setPosition(baseX + 100, baseY + 120);
 
-        // Position pigs
         smallPig.setPosition(baseX + 75, baseY + 60);
         mediumPig.setPosition(baseX + 85, baseY + 130);
 
-        // Add blocks to stage
         addBlockToStage(stoneBase1, stoneBase1.getX(), stoneBase1.getY());
         addBlockToStage(stoneBase2, stoneBase2.getX(), stoneBase2.getY());
         addBlockToStage(stoneBase3, stoneBase3.getX(), stoneBase3.getY());
@@ -687,20 +637,16 @@ public class thirdscreen implements Screen {
         addBlockToStage(glassTop1, glassTop1.getX(), glassTop1.getY());
         addBlockToStage(woodTop, woodTop.getX(), woodTop.getY());
 
-        // Add pigs to stage
         addPigToStage(smallPig, smallPig.getX(), smallPig.getY());
         addPigToStage(mediumPig, mediumPig.getX(), mediumPig.getY());
 
-        // Setup relationships between blocks and objects above them
         setupBlockRelationships();
     }
 
     private void createThirdLevelStructure() {
-        // Clear existing arrays
         allBlocks.clear();
         allPigs.clear();
 
-        // Create multiple layers with mix of block types
         stoneblock stoneBase1 = new stoneblock(60, 100);
         stoneblock stoneBase2 = new stoneblock(60, 100);
         woodblock woodBase = new woodblock(60, 100);
@@ -712,7 +658,6 @@ public class thirdscreen implements Screen {
         glassblock glassTop1 = new glassblock(60, 50);
         woodblock woodTop = new woodblock(60, 50);
 
-        // Add all blocks to tracking array
         allBlocks.add(stoneBase1);
         allBlocks.add(stoneBase2);
         allBlocks.add(woodBase);
@@ -727,16 +672,13 @@ public class thirdscreen implements Screen {
         pig mediumPig = new pig("green", "medium", 45, 60, pigTexture);
         pig bigPig = new pig("green", "big", 50, 75, pigTexture);
 
-        // Add pigs to tracking array
         allPigs.add(smallPig);
         allPigs.add(mediumPig);
         allPigs.add(bigPig);
 
-        // Position and add blocks to stage
         float baseX = 300;
         float baseY = 68;
 
-        // More complex block arrangement
         stoneBase1.setPosition(baseX, baseY);
         stoneBase2.setPosition(baseX + 65, baseY);
         woodBase.setPosition(baseX + 130, baseY);
@@ -746,12 +688,10 @@ public class thirdscreen implements Screen {
         glassTop1.setPosition(baseX + 40, baseY + 120);
         woodTop.setPosition(baseX + 110, baseY + 120);
 
-        // Position pigs at strategic points
         smallPig.setPosition(baseX + 75, baseY + 60);
         mediumPig.setPosition(baseX + 125, baseY + 60);
         bigPig.setPosition(baseX + 85, baseY + 130);
 
-        // Add blocks to stage
         addBlockToStage(stoneBase1, stoneBase1.getX(), stoneBase1.getY());
         addBlockToStage(stoneBase2, stoneBase2.getX(), stoneBase2.getY());
         addBlockToStage(woodBase, woodBase.getX(), woodBase.getY());
@@ -761,27 +701,86 @@ public class thirdscreen implements Screen {
         addBlockToStage(glassTop1, glassTop1.getX(), glassTop1.getY());
         addBlockToStage(woodTop, woodTop.getX(), woodTop.getY());
 
-        // Add pigs to stage
         addPigToStage(smallPig, smallPig.getX(), smallPig.getY());
         addPigToStage(mediumPig, mediumPig.getX(), mediumPig.getY());
         addPigToStage(bigPig, bigPig.getX(), bigPig.getY());
 
-        // Setup relationships between blocks and objects above them
         setupBlockRelationships();
     }
 
     void resetGameScreen() {
-        // Reset the game screen with the loaded data
         stage.clear();
-        addBirds();
-        createLevelStructure();
-        collisionManager = new collisionmanager(stage, allBlocks, allPigs, game, this);
+
+        if (background == null) {
+            background = new Texture("thirdscreenbg.jpg");
+        }
+        backgroundImage = new Image(background);
+        backgroundImage.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage.addActor(backgroundImage);
+
+        Texture catapultTexture = new Texture("catapult-removebg-preview.png");
+        Image catapultImage = new Image(catapultTexture);
+        catapultImage.setSize(100, 100);
+        catapultImage.setPosition(40, 68);
+        stage.addActor(catapultImage);
+
         setupScoreboard();
+
         setupButtons();
 
-        // Reinitialize transient fields
         for (Bird bird : birds) {
-            bird.reinitializeTransientFields();
+
+            System.out.println(bird.color +bird.isLaunched());
+            bird.reinitializeTransientFields(bird.texture);
+            stage.addActor(bird.getBirdImage());
+            System.out.println(bird.getBirdImage().getName());
+            if (bird.color=="Blue")
+            {
+                bird.getBirdImage().setName("bluebird");
+            } else if (bird.color=="Red") {
+                bird.getBirdImage().setName("terence");
+
+            } else if (bird.color=="Yellow") {
+                bird.getBirdImage().setName("Yellow");
+            }
+            System.out.println(bird.getBirdImage().getName());
+            if (!bird.isLaunched()) {
+                bird.setPosition(slingPosition.x, slingPosition.y);
+            }
+            addBirdListeners(bird);
+        }
+
+        for (blocks block : allBlocks) {
+            if (!block.isDestroyed()) {
+                block.reinitializeTransientFields(block.texture);
+                addBlockToStage(block, block.getX(), block.getY());
+            }
+        }
+
+        for (pig pig : allPigs) {
+            if (!pig.isDestroyed()) {
+                pig.reinitializeTransientFields(pig.texture);
+                addPigToStage(pig, pig.getX(), pig.getY());
+            }
+        }
+
+        collisionManager = new collisionmanager(stage, allBlocks, allPigs, game, this);
+        checkGameState();
+
+        System.out.println("Game screen reset with loaded data.");
+        for (blocks block : allBlocks) {
+            System.out.println("Block: " + block.getX() + ", " + block.getY() + ", " + block.isDestroyed());
+        }
+
+        for (pig pig : allPigs) {
+            System.out.println("Pig: " + pig.getX() + ", " + pig.getY() + ", " + pig.isDestroyed());
+        }
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+        if (scoreLabel != null) {
+            scoreLabel.setText("Score: " + score);
         }
     }
 }

@@ -21,16 +21,16 @@ public class TrajectoryActor extends Actor {
     public void draw(com.badlogic.gdx.graphics.g2d.Batch batch, float parentAlpha) {
         if (trajectoryPoints == null || trajectoryPoints.length < 2) return;
 
-        // Temporarily stop the batch rendering
+
         batch.end();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.WHITE);
 
-        // Draw dotted trajectory line
+
         for (int i = 1; i < trajectoryPoints.length; i++) {
-            // Ensure points are within screen bounds
-            if (i % 2 == 0) { // Only draw every other segment to create dotted effect
+
+            if (i % 2 == 0) {
                 shapeRenderer.line(trajectoryPoints[i - 1], trajectoryPoints[i]);
             }
         }

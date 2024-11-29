@@ -1,23 +1,35 @@
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-eclipse.project.name = appName + '-core'
+plugins {
+  id 'java'
+  id 'application'
+}
+
+repositories {
+  mavenCentral()
+}
 
 dependencies {
-  api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-  api "com.badlogicgames.gdx:gdx:$gdxVersion"
-  api "com.kotcrab.vis:vis-ui:$visUiVersion"
-  implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-  // Core project
-  implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-
-  // Box2D for the core module
-  implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-
-  // Desktop project
-  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-  implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-  implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-
-  if(enableGraalNative == 'true') {
-    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+  implementation 'com.badlogicgames.gdx:gdx:1.10.0'
+  implementation 'com.badlogicgames.gdx:gdx-backend-lwjgl3:1.10.0'
+  implementation 'com.badlogicgames.gdx:gdx-platform:1.10.0:natives-desktop'
+  implementation 'com.badlogicgames.gdx:gdx-box2d:1.10.0'
+  implementation 'com.badlogicgames.gdx:gdx-box2d-platform:1.10.0:natives-desktop'
+  dependencies {
+    testImplementation 'junit:junit:4.13.2' // For JUnit 4
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0' // For JUnit 5
   }
+}
+
+application {
+  mainClassName = 'io.github.Niischay7.angrybirds.lwjgl3.Lwjgl3Launcher'
+}
+
+java {
+  sourceCompatibility = '11'
+  targetCompatibility = '11'
+  withJavadocJar()
+  withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
 }
