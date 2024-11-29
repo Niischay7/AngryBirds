@@ -1,5 +1,5 @@
 package io.github.Niischay7.angrybirds;
-
+//we implemented all the libraries
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -16,7 +16,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+
 /** First screen of the application. Displayed after the application is created. */
+
+// first screeen here is the main screen where the play button is gonna be displayed.
 public class FirstScreen implements Screen {
     private Stage stage;
     private final Main game;
@@ -121,7 +124,6 @@ public class FirstScreen implements Screen {
     }
     @Override
     public void resize(int width, int height) {
-
         stage.getViewport().update(width, height, true);
     }
     @Override
@@ -145,3 +147,4 @@ public class FirstScreen implements Screen {
         backgroundMusic.dispose();
     }
 }
+//updated code (background bug fixed)

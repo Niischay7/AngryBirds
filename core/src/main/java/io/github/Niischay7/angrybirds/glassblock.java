@@ -14,7 +14,7 @@ public class glassblock extends blocks implements Serializable {
 
     public glassblock(float size, int hp) {
         super("glass", size, hp);
-        this.texture = new Texture("glassblock-removebg-preview.png");
+        this.texture = new Texture("glassblock-removebg-preview.png");//glass image ust for GUI
     }
 
     @Override

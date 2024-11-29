@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+//Pause screen containing 4 buttons resume exit load and save
 public class PauseScreen implements Screen {
     private Main game;
     private Stage stage;
@@ -143,3 +144,4 @@ public class PauseScreen implements Screen {
         }
     }
 }
+//updated code!

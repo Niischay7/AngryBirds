@@ -14,7 +14,7 @@ public class stoneblock extends blocks implements Serializable {
 
     public stoneblock(float size, int hp) {
         super("stone", size, hp);
-        this.texture = new Texture("stoneblock-preview.png");
+        this.texture = new Texture("stoneblock-preview.png");//declaring image for the time being just for GUI.
     }
 
     @Override

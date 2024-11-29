@@ -15,7 +15,7 @@ public class woodblock extends blocks implements Serializable {
 
     public woodblock(float size, int hp) {
         super("wood", size, hp);
-        this.texture = new Texture("woodie-removebg-preview.png");
+        this.texture = new Texture("woodie-removebg-preview.png");//only wood image for GUI
     }
 
     @Override
